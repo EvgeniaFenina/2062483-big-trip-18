@@ -1,43 +1,31 @@
 import {createElement} from '../render.js';
-import {EVENT_POINT_TYPE} from '../constants.js';
-import {mockDestinations} from '../mock/destination.js';
-import {mockOffersByType} from '../mock/offers.js';
+import {EVENT_POINT_TYPES} from '../constants.js';
 import {
   getTransformationDateInEditForm,
   getWordCapitalized
 } from '../utils.js';
 
-const createEditFormTemplate = (eventPoint) => {
+const createEditFormTemplate = (eventPoint, destinations, offersByType) => {
   const {dateFrom, dateTo, type, destination, basePrice, offers} = eventPoint;
 
-  const getDestinationName = () => {
-    for (const mockDestination of mockDestinations) {
-      if (destination === mockDestination.id) {
-        return mockDestination.name;
-      }
-    }
-  };
 
-  const getDestinationDescription = () => {
-    for (const mockDestination of mockDestinations) {
-      if (destination === mockDestination.id) {
-        return mockDestination.description;
-      }
-    }
-  };
+  const getDestinationName = () => (destinations.find((dest) => dest.id === destination)).name;
 
-  const createTypeEditTemplate = () => {
-    EVENT_POINT_TYPE.map((currentType) =>
-      `<div class="event__type-item">
-        <input id="event-type-bus-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${currentType}">
-        <label class="event__type-label  event__type-label--${currentType}" for="event-type-${currentType}-1">${getWordCapitalized(currentType)}</label>
-      </div>`).join('');
-  };
+  const getDestinationDescription = () => (destinations.find((dest) => dest.id === destination)).description;
+
+  const isTypeChecked = (checkedType, currentType) => currentType === checkedType ? 'checked' : '';
+
+  const createTypeEditTemplate = (checkedType) => EVENT_POINT_TYPES.map((currentType) =>
+    `<div class="event__type-item">
+      <input id="event-type-${currentType}-${EVENT_POINT_TYPES.indexOf(currentType)}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${currentType}" ${isTypeChecked(checkedType, currentType)}>
+      <label class="event__type-label  event__type-label--${currentType}" for="event-type-${currentType}-1">${getWordCapitalized(currentType)}</label>
+    </div>`).join('');
+
 
   const isOfferChecked = (offer) => offers.includes(offer.id) ? 'checked' : '';
 
   const createOfferEditTemplate = () => {
-    const offerType = mockOffersByType.find((offer) => offer.type === type);
+    const offerType = offersByType.find((offer) => offer.type === type);
     return offerType.offers.map((offer) =>
       `<div class="event__offer-selector">
         <input class="event__offer-checkbox  visually-hidden" id="event-offer-luggage-1" type="checkbox" name="event-offer-luggage" ${isOfferChecked(offer)}>
@@ -61,7 +49,7 @@ const createEditFormTemplate = (eventPoint) => {
             <div class="event__type-list">
               <fieldset class="event__type-group">
                 <legend class="visually-hidden">Event type</legend>
-                ${createTypeEditTemplate()}
+                ${createTypeEditTemplate(type)}
               </fieldset>
             </div>
           </div>
@@ -111,12 +99,14 @@ const createEditFormTemplate = (eventPoint) => {
 };
 
 export default class EditFormView {
-  constructor(eventPoint) {
+  constructor(eventPoint, destinations, offersByType) {
     this.eventPoint = eventPoint;
+    this.destinations = destinations;
+    this.offersByType = offersByType;
   }
 
   getTemplate() {
-    return createEditFormTemplate(this.eventPoint);
+    return createEditFormTemplate(this.eventPoint, this.destinations, this.offersByType);
   }
 
   getElement() {

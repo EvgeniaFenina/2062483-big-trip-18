@@ -1,6 +1,4 @@
 import {createElement} from '../render.js';
-import {mockOffers} from '../mock/offers.js';
-import {mockDestinations} from '../mock/destination.js';
 import {
   getTransformationDateEvent,
   getTransformationDateEventForUI,
@@ -9,26 +7,16 @@ import {
   getTransformationDuration
 } from '../utils.js';
 
-const createEventPointTemplate = (eventPoint) => {
+const createEventPointTemplate = (eventPoint, destinations, offersByType) => {
   const {dateFrom, dateTo, type, destination, basePrice, offers, isFavorite} = eventPoint;
 
-  const getDestinationName = () => {
-    for (const mockDestination of mockDestinations) {
-      if (destination === mockDestination.id) {
-        return mockDestination.name;
-      }
-    }
-  };
+  const getDestinationName = () => (destinations.find((dest) => dest.id === destination)).name;
 
   const isFavoriteOffer = () => isFavorite ? 'event__favorite-btn--active' : '';
 
   const createOffersTemplate = () => {
-    const offersToAd = [];
-    for (const mockOffer of mockOffers) {
-      if (offers.includes(mockOffer.id)) {
-        offersToAd.push(mockOffer);
-      }
-    }
+    const offersByPointType = offersByType.find((offer) => offer.type === type);
+    const offersToAd = offersByPointType.offers.filter((offer) => offers.indexOf(offer.id) >= 0);
     return offersToAd.map((offer) =>
       `<li class="event__offer">
         <span class="event__offer-title">${offer.title}</span>
@@ -76,12 +64,14 @@ const createEventPointTemplate = (eventPoint) => {
 };
 
 export default class EventPointView {
-  constructor (eventPoint) {
+  constructor(eventPoint, destinations, offersByType) {
     this.eventPoint = eventPoint;
+    this.destinations = destinations;
+    this.offersByType = offersByType;
   }
 
   getTemplate() {
-    return createEventPointTemplate(this.eventPoint);
+    return createEventPointTemplate(this.eventPoint, this.destinations, this.offersByType);
   }
 
   getElement() {

@@ -17,6 +17,6 @@ const generateDestination = (i) => ({
   ]
 });
 
-const mockDestinations = new Array(DestinationId.MAX).fill('').map((_, i) => generateDestination(i));
+const generateDestinations = () => Array.from({length: DestinationId.MAX}, ((_, i) => generateDestination(i)));
 
-export {mockDestinations};
+export {generateDestinations};

@@ -3,7 +3,7 @@ import {
   getRandomInteger
 } from '../utils.js';
 import {
-  EVENT_POINT_TYPE,
+  EVENT_POINT_TYPES,
   MIN_PRICE_EVENT_VALUE,
   MAX_RICE_EVENT_VALUE,
   OFFER_TITLES,
@@ -11,21 +11,18 @@ import {
 } from '../constants.js';
 
 const generateOffer = (i) => ({
-  id : i + 1,
+  id : i,
   title : getRandomArrayElement(OFFER_TITLES),
   price : getRandomInteger(MIN_PRICE_EVENT_VALUE, MAX_RICE_EVENT_VALUE)
 });
 
-const mockOffers = new Array(OfferId.MAX).fill('').map((_, i) => generateOffer(i));
+const mockOffers = Array.from({length: OfferId.MAX}, ((_, i) => generateOffer(i)));
 
 const generateOfferByType = (i) => ({
-  type: EVENT_POINT_TYPE[i],
+  type: EVENT_POINT_TYPES[i],
   offers: mockOffers
 });
 
-const mockOffersByType = new Array(EVENT_POINT_TYPE.length).fill('').map((_, i) => generateOfferByType(i));
+const generateOffersByType = () => Array.from({length: EVENT_POINT_TYPES.length}, ((_, i) => generateOfferByType(i)));
 
-export {
-  mockOffers,
-  mockOffersByType
-};
+export {generateOffersByType};

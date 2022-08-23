@@ -1,4 +1,5 @@
 import dayjs from 'dayjs';
+import duration from 'dayjs/plugin/duration';
 import {
   MINUTES_IN_HOUR,
   MINUTES_IN_DAY
@@ -6,26 +7,35 @@ import {
 
 const getTransformationDateEvent = (dateEvent) => dayjs(dateEvent).format('YYYY-MM-DD');
 const getTransformationDateEventForUI = (date) => dayjs(date).format('MMM D');
-const getTransformationDate = (date) => date !== null ? dayjs(date).format() : '';
+const getTransformationDate = (date) => dayjs(date).format();
 const getTransformationTime = (time) => dayjs(time).format('HH:mm');
 const getTransformationDateInEditForm = (date) => dayjs(date).format('DD/MM/YY HH:mm');
 const getDurationEvent = (dateTo, dateFrom) => dayjs(dateTo).diff(dayjs(dateFrom), 'm');
 
-const convertDurationInMinutes = (minutes) => `${String(Math.floor(minutes)).padStart(2, '0')}M`;
-const convertDurationInHours = (minutes) => `${String(Math.floor(minutes / MINUTES_IN_HOUR)).padStart(2, '0')}H ${convertDurationInMinutes(minutes - Math.floor(minutes / MINUTES_IN_HOUR) * MINUTES_IN_HOUR)}`;
-const convertDurationInDays = (minutes) => `${String(Math.floor(minutes / MINUTES_IN_DAY)).padStart(2, '0')}D ${convertDurationInHours(minutes - Math.floor(minutes / MINUTES_IN_DAY) * MINUTES_IN_DAY)}`;
-
-
 const getTransformationDuration = (dateFrom, dateTo) => {
+  dayjs.extend(duration);
   const durationInMin = getDurationEvent(dateFrom, dateTo);
-  if (durationInMin < MINUTES_IN_HOUR) {
-    return convertDurationInMinutes(durationInMin);
+  const eventDuration = dayjs.duration(durationInMin, 'm');
+  if(durationInMin % MINUTES_IN_DAY === 0) {
+    return eventDuration.format('DD[D]');
+  }
+  if(durationInMin > MINUTES_IN_DAY && durationInMin % MINUTES_IN_HOUR === 0) {
+    return eventDuration.format('DD[D] HH[H]');
+  }
+  if(durationInMin > MINUTES_IN_DAY && durationInMin % MINUTES_IN_DAY < MINUTES_IN_HOUR) {
+    return eventDuration.format('DD[D] mm[M]');
+  }
+  if(durationInMin > MINUTES_IN_DAY) {
+    return eventDuration.format('DD[D] HH[H] mm[M]');
+  }
+  if (durationInMin >= MINUTES_IN_HOUR && durationInMin < MINUTES_IN_DAY && durationInMin % MINUTES_IN_HOUR === 0) {
+    return eventDuration.format('HH[H]');
   }
   if (durationInMin > MINUTES_IN_HOUR && durationInMin < MINUTES_IN_DAY) {
-    return convertDurationInHours(durationInMin);
+    return eventDuration.format('HH[H] mm[M]');
   }
-  if (durationInMin > MINUTES_IN_DAY) {
-    return convertDurationInDays(durationInMin);
+  if (durationInMin < MINUTES_IN_HOUR) {
+    return eventDuration.format('mm[M]');
   }
 };
 
