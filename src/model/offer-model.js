@@ -1,7 +1,9 @@
 import {generateOffersByType} from '../mock/offers.js';
 
 export default class OffersModel {
-  offersByType = generateOffersByType();
+  #offersByType = generateOffersByType();
 
-  getOfferByType = () => this.offersByType;
+  get offerByType() {
+    return this.#offersByType;
+  }
 }

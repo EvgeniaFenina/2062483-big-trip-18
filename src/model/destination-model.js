@@ -1,7 +1,9 @@
 import {generateDestinations} from '../mock/destination.js';
 
 export default class DestinationsModel {
-  destinations = generateDestinations();
+  #destinations = generateDestinations();
 
-  getDestination = () => this.destinations;
+  get destination() {
+    return this.#destinations;
+  }
 }
