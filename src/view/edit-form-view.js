@@ -55,7 +55,7 @@ const createEditFormTemplate = (eventPoint, destinations, offersByType) => {
           </div>
           <div class="event__field-group  event__field-group--destination">
             <label class="event__label  event__type-output" for="event-destination-1">
-              Flight
+              ${type}
             </label>
             <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${getDestinationName()}" list="destination-list-1">
             <datalist id="destination-list-1">
@@ -99,25 +99,29 @@ const createEditFormTemplate = (eventPoint, destinations, offersByType) => {
 };
 
 export default class EditFormView {
+  #element = null;
+  #eventPoint = null;
+  #destinations = null;
+  #offersByType = null;
+
   constructor(eventPoint, destinations, offersByType) {
-    this.eventPoint = eventPoint;
-    this.destinations = destinations;
-    this.offersByType = offersByType;
+    this.#eventPoint = eventPoint;
+    this.#destinations = destinations;
+    this.#offersByType = offersByType;
   }
 
-  getTemplate() {
-    return createEditFormTemplate(this.eventPoint, this.destinations, this.offersByType);
+  get template() {
+    return createEditFormTemplate(this.#eventPoint, this.#destinations, this.#offersByType);
   }
 
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.template);
     }
-
-    return this.element;
+    return this.#element;
   }
 
   removeElement() {
-    this.element = null;
+    this.#element = null;
   }
 }

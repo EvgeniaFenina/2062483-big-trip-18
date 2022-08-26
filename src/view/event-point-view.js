@@ -40,7 +40,7 @@ const createEventPointTemplate = (eventPoint, destinations, offersByType) => {
             &mdash;
             <time class="event__end-time" datetime=${getTransformationDate(dateTo)}>${getTransformationTime(dateTo)}</time>
           </p>
-          <p class="event__duration">${getTransformationDuration(dateTo, dateFrom)}</p>
+          <p class="event__duration">${getTransformationDuration(dateFrom, dateTo)}</p>
         </div>
         <p class="event__price">
           &euro;&nbsp;<span class="event__price-value">${basePrice}</span>
@@ -64,24 +64,29 @@ const createEventPointTemplate = (eventPoint, destinations, offersByType) => {
 };
 
 export default class EventPointView {
+  #element = null;
+  #eventPoint = null;
+  #destinations = null;
+  #offersByType = null;
+
   constructor(eventPoint, destinations, offersByType) {
-    this.eventPoint = eventPoint;
-    this.destinations = destinations;
-    this.offersByType = offersByType;
+    this.#eventPoint = eventPoint;
+    this.#destinations = destinations;
+    this.#offersByType = offersByType;
   }
 
-  getTemplate() {
-    return createEventPointTemplate(this.eventPoint, this.destinations, this.offersByType);
+  get template() {
+    return createEventPointTemplate(this.#eventPoint, this.#destinations, this.#offersByType);
   }
 
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.template);
     }
-    return this.element;
+    return this.#element;
   }
 
   removeElement() {
-    this.element = null;
+    this.#element = null;
   }
 }
