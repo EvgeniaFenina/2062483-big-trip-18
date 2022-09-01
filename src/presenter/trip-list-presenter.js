@@ -1,4 +1,4 @@
-import {render} from '../render.js';
+import {render} from '../framework/render.js';
 import TripListView from '../view/trip-list-view.js';
 import EditFormView from '../view/edit-form-view.js';
 import EventPointView from '../view/event-point-view.js';
@@ -48,23 +48,21 @@ export default class TripListPresenter {
       }
     };
 
-    const onOpenFormEdit = (evt) => {
-      evt.preventDefault();
+    const onOpenFormEdit = () => {
       replaceEventPointToEditForm();
       document.addEventListener('keydown', onEscKeyDown);
     };
 
-    const onCloseFormEdit = (evt) => {
-      evt.preventDefault();
+    const onCloseFormEdit = () => {
       replaceEditFormToEventPoint();
       document.addEventListener('keydown', onEscKeyDown);
     };
 
-    eventPointComponent.element.querySelector('.event__rollup-btn').addEventListener('click', onOpenFormEdit);
+    eventPointComponent.setOpenFormClickHandler(onOpenFormEdit);
 
-    formEditComponent.element.querySelector('.event__rollup-btn').addEventListener('click', onCloseFormEdit);
+    formEditComponent.setCloseFormClickHandler(onCloseFormEdit);
 
-    formEditComponent.element.addEventListener('submit', onCloseFormEdit);
+    formEditComponent.setFormSubmitHandler(onCloseFormEdit);
 
     render(eventPointComponent, this.#tripListComponent.element);
   };
@@ -73,9 +71,8 @@ export default class TripListPresenter {
     render(this.#tripListComponent, this.#tripListContainer);
 
     if (this.#eventPointsList.length === 0) {
-      render(new NoEventPointView(), this.#tripListComponent.element);
-    } else {
-      this.#eventPointsList.forEach((event) => this.#renderEventPoint(event, this.#eventDestinations, this.#eventOffersByType));
+      return render(new NoEventPointView(), this.#tripListComponent.element);
     }
+    return this.#eventPointsList.forEach((event) => this.#renderEventPoint(event, this.#eventDestinations, this.#eventOffersByType));
   };
 }

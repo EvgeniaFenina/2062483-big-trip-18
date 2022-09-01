@@ -30,7 +30,9 @@
     "node": "16"
   },
   "dependencies": {
+    "css-loader": "^6.7.1",
     "dayjs": "^1.11.3",
-    "nanoid": "^4.0.0"
+    "nanoid": "^4.0.0",
+    "style-loader": "^3.3.1"
   }
 }

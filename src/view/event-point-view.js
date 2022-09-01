@@ -1,4 +1,4 @@
-import {createElement} from '../render.js';
+import AbstractView from '../framework/view/abstract-view.js';
 import {
   getTransformationDateEvent,
   getTransformationDateEventForUI,
@@ -63,13 +63,14 @@ const createEventPointTemplate = (eventPoint, destinations, offersByType) => {
   );
 };
 
-export default class EventPointView {
-  #element = null;
+export default class EventPointView extends AbstractView {
   #eventPoint = null;
   #destinations = null;
   #offersByType = null;
 
   constructor(eventPoint, destinations, offersByType) {
+    super();
+
     this.#eventPoint = eventPoint;
     this.#destinations = destinations;
     this.#offersByType = offersByType;
@@ -79,14 +80,13 @@ export default class EventPointView {
     return createEventPointTemplate(this.#eventPoint, this.#destinations, this.#offersByType);
   }
 
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
-    return this.#element;
-  }
+  setOpenFormClickHandler = (callback) => {
+    this._callback.editClick = callback;
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#openFormClickHandler);
+  };
 
-  removeElement() {
-    this.#element = null;
-  }
+  #openFormClickHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.editClick();
+  };
 }

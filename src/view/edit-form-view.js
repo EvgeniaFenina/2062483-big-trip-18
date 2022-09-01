@@ -1,4 +1,4 @@
-import {createElement} from '../render.js';
+import AbstractView from '../framework/view/abstract-view.js';
 import {EVENT_POINT_TYPES} from '../constants.js';
 import {
   getTransformationDateInEditForm,
@@ -98,13 +98,14 @@ const createEditFormTemplate = (eventPoint, destinations, offersByType) => {
       </form>` );
 };
 
-export default class EditFormView {
-  #element = null;
+export default class EditFormView extends AbstractView {
   #eventPoint = null;
   #destinations = null;
   #offersByType = null;
 
   constructor(eventPoint, destinations, offersByType) {
+    super();
+
     this.#eventPoint = eventPoint;
     this.#destinations = destinations;
     this.#offersByType = offersByType;
@@ -114,14 +115,23 @@ export default class EditFormView {
     return createEditFormTemplate(this.#eventPoint, this.#destinations, this.#offersByType);
   }
 
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
-    return this.#element;
-  }
+  setFormSubmitHandler = (callback) => {
+    this._callback.formSubmit = callback;
+    this.element.addEventListener('submit', this.#formSubmitHandler);
+  };
 
-  removeElement() {
-    this.#element = null;
-  }
+  #formSubmitHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.formSubmit();
+  };
+
+  setCloseFormClickHandler = (callback) => {
+    this._callback.click = callback;
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#closeFormClickHandler);
+  };
+
+  #closeFormClickHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.click();
+  };
 }
