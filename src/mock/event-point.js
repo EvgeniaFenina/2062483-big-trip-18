@@ -4,7 +4,7 @@ import {
   getRandomArrayElement,
   getRandomInteger,
   geArrayRandomLength
-} from '../utils.js';
+} from '../utils/common.js';
 import {
   EVENT_POINT_TYPES,
   MIN_PRICE_EVENT_VALUE,

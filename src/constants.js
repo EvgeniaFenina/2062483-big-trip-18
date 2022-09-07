@@ -49,6 +49,12 @@ const DestinationId = {
   MAX: DESTINATION_NAMES.length
 };
 
+const FilterType = {
+  EVERYTHING: 'everything',
+  FUTURE: 'future',
+  PAST: 'past',
+};
+
 export {
   EVENT_POINT_TYPES,
   MIN_PRICE_EVENT_VALUE,
@@ -59,6 +65,7 @@ export {
   DESTINATION_DESCRIPTIONS,
   DestinationId,
   MAX_MINUTES_IN_EVENT_DAY_FROM,
-  MAX_MINUTES_IN_EVENT_DAY_TO
+  MAX_MINUTES_IN_EVENT_DAY_TO,
+  FilterType
 };
 
