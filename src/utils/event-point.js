@@ -22,9 +22,9 @@ const getTransformationDuration = (dateFrom, dateTo) => {
   return timeDuration.format('mm[M]');
 };
 
-const isEventPointInFuture = ({dateFrom, dateTo}) => dayjs().isSame(dayjs(dateFrom)) || dayjs().isBefore(dayjs(dateFrom)) || dayjs().isAfter(dayjs(dateFrom)) && dayjs().isBefore(dayjs(dateTo));
+const isEventPointInFuture = ({dateFrom}) => dayjs().isSame(dayjs(dateFrom)) || dayjs().isBefore(dayjs(dateFrom));
 
-const isEventPointInPast = ({dateFrom, dateTo}) => dayjs().isAfter(dayjs(dateTo)) || (dayjs().isAfter(dayjs(dateFrom)) && dayjs().isBefore(dayjs(dateTo)));
+const isEventPointInPast = ({dateTo}) => dayjs().isAfter(dayjs(dateTo));
 
 export {
   getTransformationDateEvent,

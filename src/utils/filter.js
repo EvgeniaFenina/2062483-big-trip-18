@@ -6,9 +6,9 @@ import {
 
 
 const filter = {
-  [FilterType.EVERYTHING] : (eventPoints) => eventPoints.filter((point) => point),
-  [FilterType.FUTURE] : (eventPoints) => eventPoints.filter((point) => isEventPointInFuture(point)),
-  [FilterType.PAST] : (eventPoints) => eventPoints.filter((point) => isEventPointInPast(point)),
+  [FilterType.EVERYTHING] : (eventPoints) => eventPoints,
+  [FilterType.FUTURE] : (eventPoints) => eventPoints.filter(isEventPointInFuture),
+  [FilterType.PAST] : (eventPoints) => eventPoints.filter(isEventPointInPast),
 };
 
 export {filter};
