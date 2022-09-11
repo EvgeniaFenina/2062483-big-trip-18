@@ -1,9 +1,12 @@
-import {render} from '../framework/render.js';
 import TripListView from '../view/trip-list-view.js';
 import EditFormView from '../view/edit-form-view.js';
 import EventPointView from '../view/event-point-view.js';
 import NoEventPointView from '../view/no-event-point-view.js';
-import {isPressEscape} from '../utils.js';
+import {isPressEscape} from '../utils/common.js';
+import {
+  render,
+  replace
+} from '../framework/render.js';
 
 export default class TripListPresenter {
   #tripListComponent = new TripListView();
@@ -36,9 +39,9 @@ export default class TripListPresenter {
     const eventPointComponent = new EventPointView(eventPoint, destinations, offersByType);
     const formEditComponent = new EditFormView(eventPoint, destinations, offersByType);
 
-    const replaceEventPointToEditForm = () => this.#tripListComponent.element.replaceChild(formEditComponent.element, eventPointComponent.element);
+    const replaceEventPointToEditForm = () => replace(formEditComponent, eventPointComponent);
 
-    const replaceEditFormToEventPoint = () => this.#tripListComponent.element.replaceChild(eventPointComponent.element, formEditComponent.element);
+    const replaceEditFormToEventPoint = () => replace(eventPointComponent, formEditComponent);
 
     const onEscKeyDown = (evt) => {
       if (isPressEscape(evt)) {
@@ -58,11 +61,11 @@ export default class TripListPresenter {
       document.addEventListener('keydown', onEscKeyDown);
     };
 
-    eventPointComponent.setOpenFormClickHandler(onOpenFormEdit);
+    eventPointComponent.setExpandButtonClickHandler(onOpenFormEdit);
 
-    formEditComponent.setCloseFormClickHandler(onCloseFormEdit);
+    formEditComponent.setCollapseButtonClickHandler(onCloseFormEdit);
 
-    formEditComponent.setFormSubmitHandler(onCloseFormEdit);
+    formEditComponent.setEditFormSubmitHandler(onCloseFormEdit);
 
     render(eventPointComponent, this.#tripListComponent.element);
   };

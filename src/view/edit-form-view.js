@@ -1,9 +1,7 @@
 import AbstractView from '../framework/view/abstract-view.js';
 import {EVENT_POINT_TYPES} from '../constants.js';
-import {
-  getTransformationDateInEditForm,
-  getWordCapitalized
-} from '../utils.js';
+import {getTransformationDateInEditForm} from '../utils/event-point.js';
+import {getWordCapitalized} from '../utils/common.js';
 
 const createEditFormTemplate = (eventPoint, destinations, offersByType) => {
   const {dateFrom, dateTo, type, destination, basePrice, offers} = eventPoint;
@@ -115,22 +113,22 @@ export default class EditFormView extends AbstractView {
     return createEditFormTemplate(this.#eventPoint, this.#destinations, this.#offersByType);
   }
 
-  setFormSubmitHandler = (callback) => {
+  setEditFormSubmitHandler = (callback) => {
     this._callback.formSubmit = callback;
-    this.element.addEventListener('submit', this.#formSubmitHandler);
+    this.element.addEventListener('submit', this.#editFormSubmitHandler);
   };
 
-  #formSubmitHandler = (evt) => {
+  #editFormSubmitHandler = (evt) => {
     evt.preventDefault();
     this._callback.formSubmit();
   };
 
-  setCloseFormClickHandler = (callback) => {
+  setCollapseButtonClickHandler = (callback) => {
     this._callback.click = callback;
-    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#closeFormClickHandler);
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#сollapseButtonClickHandler);
   };
 
-  #closeFormClickHandler = (evt) => {
+  #сollapseButtonClickHandler = (evt) => {
     evt.preventDefault();
     this._callback.click();
   };

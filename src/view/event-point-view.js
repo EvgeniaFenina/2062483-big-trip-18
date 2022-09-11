@@ -5,7 +5,7 @@ import {
   getTransformationDate,
   getTransformationTime,
   getTransformationDuration
-} from '../utils.js';
+} from '../utils/event-point.js';
 
 const createEventPointTemplate = (eventPoint, destinations, offersByType) => {
   const {dateFrom, dateTo, type, destination, basePrice, offers, isFavorite} = eventPoint;
@@ -80,12 +80,12 @@ export default class EventPointView extends AbstractView {
     return createEventPointTemplate(this.#eventPoint, this.#destinations, this.#offersByType);
   }
 
-  setOpenFormClickHandler = (callback) => {
+  setExpandButtonClickHandler = (callback) => {
     this._callback.editClick = callback;
-    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#openFormClickHandler);
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#expandButtonClickHandler);
   };
 
-  #openFormClickHandler = (evt) => {
+  #expandButtonClickHandler = (evt) => {
     evt.preventDefault();
     this._callback.editClick();
   };
