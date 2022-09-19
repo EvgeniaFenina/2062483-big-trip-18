@@ -85,8 +85,18 @@ export default class EventPointView extends AbstractView {
     this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#expandButtonClickHandler);
   };
 
+  setFavoriteClickHandler = (callback) => {
+    this._callback.favoriteClick = callback;
+    this.element.querySelector('.event__favorite-btn').addEventListener('click', this.#favoriteClickHandler);
+  };
+
   #expandButtonClickHandler = (evt) => {
     evt.preventDefault();
     this._callback.editClick();
+  };
+
+  #favoriteClickHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.favoriteClick();
   };
 }

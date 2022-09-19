@@ -55,6 +55,11 @@ const FilterType = {
   PAST: 'past',
 };
 
+const Mode = {
+  DEFAULT: 'DEFAULT',
+  EDITING: 'EDITING',
+};
+
 export {
   EVENT_POINT_TYPES,
   MIN_PRICE_EVENT_VALUE,
@@ -66,6 +71,7 @@ export {
   DestinationId,
   MAX_MINUTES_IN_EVENT_DAY_FROM,
   MAX_MINUTES_IN_EVENT_DAY_TO,
-  FilterType
+  FilterType,
+  Mode
 };
 

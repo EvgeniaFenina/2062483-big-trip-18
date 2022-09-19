@@ -1,15 +1,12 @@
 import TripListView from '../view/trip-list-view.js';
-import EditFormView from '../view/edit-form-view.js';
-import EventPointView from '../view/event-point-view.js';
 import NoEventPointView from '../view/no-event-point-view.js';
-import {isPressEscape} from '../utils/common.js';
-import {
-  render,
-  replace
-} from '../framework/render.js';
+import EventPointPresenter from '../presenter/event-point-presenter.js';
+import {render} from '../framework/render.js';
+import {updateItem} from '../utils/common.js';
 
 export default class TripListPresenter {
   #tripListComponent = new TripListView();
+  #noEventPointComponent = new NoEventPointView();
 
   #tripListContainer = null;
   #eventPointModel = null;
@@ -19,6 +16,8 @@ export default class TripListPresenter {
   #eventPointsList = [];
   #eventDestinations = [];
   #eventOffersByType = [];
+
+  #eventPointPresenter = new Map();
 
   constructor(tripListContainer, eventPointModel, destinationModel, offerModel) {
     this.#tripListContainer = tripListContainer;
@@ -32,50 +31,39 @@ export default class TripListPresenter {
     this.#eventDestinations = [...this.#destinationModel.destination];
     this.#eventOffersByType = [...this.#offerModel.offerByType];
 
-    this.#renderEventPointList();
+    this.#renderTripList();
   };
 
-  #renderEventPoint = (eventPoint, destinations, offersByType) => {
-    const eventPointComponent = new EventPointView(eventPoint, destinations, offersByType);
-    const formEditComponent = new EditFormView(eventPoint, destinations, offersByType);
+  #handleModeChange = () => this.#eventPointPresenter.forEach((presenter) => presenter.resetView());
 
-    const replaceEventPointToEditForm = () => replace(formEditComponent, eventPointComponent);
-
-    const replaceEditFormToEventPoint = () => replace(eventPointComponent, formEditComponent);
-
-    const onEscKeyDown = (evt) => {
-      if (isPressEscape(evt)) {
-        evt.preventDefault();
-        replaceEditFormToEventPoint();
-        document.removeEventListener('keydown', onEscKeyDown);
-      }
-    };
-
-    const onOpenFormEdit = () => {
-      replaceEventPointToEditForm();
-      document.addEventListener('keydown', onEscKeyDown);
-    };
-
-    const onCloseFormEdit = () => {
-      replaceEditFormToEventPoint();
-      document.addEventListener('keydown', onEscKeyDown);
-    };
-
-    eventPointComponent.setExpandButtonClickHandler(onOpenFormEdit);
-
-    formEditComponent.setCollapseButtonClickHandler(onCloseFormEdit);
-
-    formEditComponent.setEditFormSubmitHandler(onCloseFormEdit);
-
-    render(eventPointComponent, this.#tripListComponent.element);
+  #handleEventPointChange = (updatedPoint) => {
+    this.#eventPointsList = updateItem(this.#eventPointsList, updatedPoint);
+    this.#eventPointPresenter.get(updatedPoint.id).init(updatedPoint, this.#eventDestinations, this.#eventOffersByType);
   };
 
-  #renderEventPointList = () => {
+  #renderEventPoint = (eventPoint) => {
+    const eventPointPresenter = new EventPointPresenter(this.#tripListComponent.element, this.#handleEventPointChange, this.#handleModeChange);
+    eventPointPresenter.init(eventPoint, this.#eventDestinations, this.#eventOffersByType);
+    this.#eventPointPresenter.set(eventPoint.id, eventPointPresenter);
+  };
+
+  #rederEventPoins = () => {
+    this.#eventPointsList.forEach((event) => this.#renderEventPoint(event));
+  };
+
+  #renderNoEventPoint = () => render(this.#noEventPointComponent, this.#tripListComponent.element);
+
+  #clearTripList = () => {
+    this.#eventPointPresenter.forEach((presenter) => presenter.destroy());
+    this.#eventPointPresenter.clear();
+  };
+
+  #renderTripList = () => {
     render(this.#tripListComponent, this.#tripListContainer);
 
     if (this.#eventPointsList.length === 0) {
-      return render(new NoEventPointView(), this.#tripListComponent.element);
+      return this.#renderNoEventPoint();
     }
-    return this.#eventPointsList.forEach((event) => this.#renderEventPoint(event, this.#eventDestinations, this.#eventOffersByType));
+    return this.#rederEventPoins();
   };
 }
