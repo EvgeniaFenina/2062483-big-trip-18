@@ -1,6 +1,6 @@
 import EventPointView from '../view/event-point-view.js';
 import EditFormView from '../view/edit-form-view.js';
-import {isPressEscape} from '../utils/common.js';
+import {isEscapeKey} from '../utils/common.js';
 import {Mode} from '../constants.js';
 import {
   render,
@@ -86,7 +86,7 @@ export default class EventPointPresenter {
   };
 
   #onEscKeyDown = (evt) => {
-    if (isPressEscape(evt)) {
+    if (isEscapeKey(evt)) {
       evt.preventDefault();
       this.#replaceEditFormToEventPoint();
       this.#mode = Mode.DEFAULT;

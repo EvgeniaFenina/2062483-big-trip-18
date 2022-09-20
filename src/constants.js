@@ -60,6 +60,12 @@ const Mode = {
   EDITING: 'EDITING',
 };
 
+const SortType = {
+  DAY: 'day',
+  TIME: 'time',
+  PRICE: 'price',
+};
+
 export {
   EVENT_POINT_TYPES,
   MIN_PRICE_EVENT_VALUE,
@@ -72,6 +78,7 @@ export {
   MAX_MINUTES_IN_EVENT_DAY_FROM,
   MAX_MINUTES_IN_EVENT_DAY_TO,
   FilterType,
-  Mode
+  Mode,
+  SortType
 };
 
