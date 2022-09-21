@@ -61,9 +61,9 @@ const Mode = {
 };
 
 const SortType = {
-  DAY: 'day',
-  TIME: 'time',
-  PRICE: 'price',
+  DAY: 'sort-day',
+  TIME: 'sort-time',
+  PRICE: 'sort-price',
 };
 
 export {

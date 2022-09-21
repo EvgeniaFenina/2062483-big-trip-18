@@ -43,13 +43,16 @@ export default class TripListPresenter {
     this.#eventPointsList = [...this.#eventPointModel.eventPoints];
     this.#eventDestinations = [...this.#destinationModel.destination];
     this.#eventOffersByType = [...this.#offerModel.offerByType];
-    this.#sourcedEventPointsList = [...this.#eventPointModel.eventPoints];
+    this.#sourcedEventPointsList = this.#eventPointsList.sort(sortByDay);
 
     this.#renderTripList();
   };
 
   #sortEventPoints = (sortType) => {
     switch (sortType) {
+      case SortType.DAY :
+        this.#eventPointsList.sort(sortByDay);
+        break;
       case SortType.TIME :
         this.#eventPointsList.sort(sortByTime);
         break;
@@ -57,8 +60,9 @@ export default class TripListPresenter {
         this.#eventPointsList.sort(sortByPrice);
         break;
       default :
-        this.#eventPointsList.sort(sortByDay);
+        throw new Error(`Unknown order state: '${sortType}'!`);
     }
+
     this.#currentSortType = sortType;
   };
 
@@ -71,10 +75,6 @@ export default class TripListPresenter {
   };
 
   #handleSortTypeChange = (sortType) => {
-    if (this.#currentSortType === sortType) {
-      return;
-    }
-
     this.#sortEventPoints(sortType);
     this.#clearTripList();
     this.#renderTripList();
@@ -111,6 +111,6 @@ export default class TripListPresenter {
     }
 
     this.#renderSort();
-    return this.#renderEventPoins();
+    this.#renderEventPoins();
   };
 }

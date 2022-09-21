@@ -27,11 +27,11 @@ const isEventPointInFuture = ({dateFrom}) => dayjs().isSame(dayjs(dateFrom)) || 
 
 const isEventPointInPast = ({dateTo}) => dayjs().isAfter(dayjs(dateTo));
 
-const sortByPrice = (firstPoint, secondPoint) => secondPoint.basePrice - firstPoint.basePrice;
+const sortByPrice = (a, b) => b.basePrice - a.basePrice;
 
-const sortByTime = (firstPoint, secondPoint) => getDurationEventInMin(secondPoint.dateFrom, secondPoint.dateTo) - getDurationEventInMin(firstPoint.dateFrom, firstPoint.dateTo);
+const sortByTime = (a, b) => getDurationEventInMin(b.dateFrom, b.dateTo) - getDurationEventInMin(a.dateFrom, a.dateTo);
 
-const sortByDay = (firstPoint, secondPoint) => dayjs(firstPoint.dateFrom).isAfter(dayjs(secondPoint.dateFrom)) ? 1 : -1;
+const sortByDay = (a, b) => dayjs(a.dateFrom).diff(dayjs(b.dateFrom));
 
 export {
   getTransformationDateEvent,
