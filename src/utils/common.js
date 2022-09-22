@@ -10,7 +10,7 @@ const geArrayRandomLength = (array) => array.sort(() => Math.random() - 0.5).sli
 
 const getWordCapitalized = (word) => word[0].toUpperCase() + word.slice(1);
 
-const isPressEscape = (evt) => evt.key === 'Escape' || evt.key === 'Esc';
+const isEscapeKey = (evt) => evt.key === 'Escape' || evt.key === 'Esc';
 
 const updateItem = (items, update) => {
   const index = items.findIndex((item) => item.id === update.id);
@@ -31,6 +31,6 @@ export {
   getRandomArrayElement,
   geArrayRandomLength,
   getWordCapitalized,
-  isPressEscape,
+  isEscapeKey,
   updateItem
 };

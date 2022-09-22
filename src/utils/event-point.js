@@ -6,6 +6,7 @@ const getTransformationDateEventForUI = (date) => dayjs(date).format('MMM D');
 const getTransformationDate = (date) => dayjs(date).format();
 const getTransformationTime = (time) => dayjs(time).format('HH:mm');
 const getTransformationDateInEditForm = (date) => dayjs(date).format('DD/MM/YY HH:mm');
+const getDurationEventInMin = (dateFrom, dateTo) => dayjs(dateTo).diff(dayjs(dateFrom), 'minute');
 
 const getTransformationDuration = (dateFrom, dateTo) => {
   dayjs.extend(duration);
@@ -26,6 +27,12 @@ const isEventPointInFuture = ({dateFrom}) => dayjs().isSame(dayjs(dateFrom)) || 
 
 const isEventPointInPast = ({dateTo}) => dayjs().isAfter(dayjs(dateTo));
 
+const sortByPrice = (a, b) => b.basePrice - a.basePrice;
+
+const sortByTime = (a, b) => getDurationEventInMin(b.dateFrom, b.dateTo) - getDurationEventInMin(a.dateFrom, a.dateTo);
+
+const sortByDay = (a, b) => dayjs(a.dateFrom).diff(dayjs(b.dateFrom));
+
 export {
   getTransformationDateEvent,
   getTransformationDateEventForUI,
@@ -34,5 +41,8 @@ export {
   getTransformationDuration,
   getTransformationDateInEditForm,
   isEventPointInFuture,
-  isEventPointInPast
+  isEventPointInPast,
+  sortByPrice,
+  sortByTime,
+  sortByDay
 };
