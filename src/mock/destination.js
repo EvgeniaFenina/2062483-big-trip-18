@@ -1,4 +1,7 @@
-import {getRandomArrayElement} from '../utils/common.js';
+import {
+  getRandomArrayElement,
+  getRandomInteger
+} from '../utils/common.js';
 import {
   DESTINATION_NAMES,
   DESTINATION_DESCRIPTIONS,
@@ -9,9 +12,9 @@ const generateDestination = (i) => ({
   id : i + 1,
   description : getRandomArrayElement(DESTINATION_DESCRIPTIONS),
   name : getRandomArrayElement(DESTINATION_NAMES),
-  pictures: [
+  pictures : [
     {
-      src : `http://picsum.photos/300/200?r=${Math.random()}`,
+      src :  `img/photos/${getRandomInteger(1, 5)}.jpg`,
       description : getRandomArrayElement(DESTINATION_DESCRIPTIONS)
     }
   ]

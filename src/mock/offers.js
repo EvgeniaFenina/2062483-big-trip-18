@@ -1,6 +1,7 @@
 import {
   getRandomArrayElement,
-  getRandomInteger
+  getRandomInteger,
+  geArrayRandomLength
 } from '../utils/common.js';
 import {
   EVENT_POINT_TYPES,
@@ -20,7 +21,7 @@ const mockOffers = Array.from({length: OfferId.MAX}, ((_, i) => generateOffer(i)
 
 const generateOfferByType = (i) => ({
   type: EVENT_POINT_TYPES[i],
-  offers: mockOffers
+  offers: geArrayRandomLength(mockOffers)
 });
 
 const generateOffersByType = () => Array.from({length: EVENT_POINT_TYPES.length}, ((_, i) => generateOfferByType(i)));

@@ -42,7 +42,7 @@ export default class EventPointPresenter {
     this.#eventPointComponent.setExpandButtonClickHandler(this.#onOpenFormEdit);
     this.#eventPointComponent.setFavoriteClickHandler(this.#onFavoriteClick);
     this.#editEventPointComponent.setCollapseButtonClickHandler(this.#onCloseFormEdit);
-    this.#editEventPointComponent.setEditFormSubmitHandler(this.#onCloseFormEdit);
+    this.#editEventPointComponent.setEditFormSubmitHandler(this.#onSubmitFormEdit);
 
     if (prevEventPointComponent === null || prevEditEventPointComponent === null) {
       render(this.#eventPointComponent, this.#tripListContainer);
@@ -81,6 +81,7 @@ export default class EventPointPresenter {
 
   resetView = () => {
     if (this.#mode !== Mode.DEFAULT) {
+      this.#editEventPointComponent.reset(this.#eventPoint, this.#destinations, this.#offers);
       this.#replaceEditFormToEventPoint();
     }
   };
@@ -88,14 +89,22 @@ export default class EventPointPresenter {
   #onEscKeyDown = (evt) => {
     if (isEscapeKey(evt)) {
       evt.preventDefault();
+      this.#editEventPointComponent.reset(this.#eventPoint, this.#destinations, this.#offers);
       this.#replaceEditFormToEventPoint();
-      this.#mode = Mode.DEFAULT;
     }
   };
 
   #onOpenFormEdit = () => this.#replaceEventPointToEditForm();
 
-  #onCloseFormEdit = () => this.#replaceEditFormToEventPoint();
+  #onCloseFormEdit = () => {
+    this.#editEventPointComponent.reset(this.#eventPoint, this.#destinations, this.#offers);
+    this.#replaceEditFormToEventPoint();
+  };
+
+  #onSubmitFormEdit = (update) => {
+    this.#changeData(update);
+    this.#replaceEditFormToEventPoint();
+  };
 
   #onFavoriteClick = () => this.#changeData({...this.#eventPoint, isFavorite: !this.#eventPoint.isFavorite});
 }
