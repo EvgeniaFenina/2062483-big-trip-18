@@ -10,6 +10,8 @@ const geArrayRandomLength = (array) => array.sort(() => Math.random() - 0.5).sli
 
 const getWordCapitalized = (word) => word[0].toUpperCase() + word.slice(1);
 
+const formatWords = (words) => words.toLowerCase().replace(/\s/g, '-');
+
 const isEscapeKey = (evt) => evt.key === 'Escape' || evt.key === 'Esc';
 
 const updateItem = (items, update) => {
@@ -32,5 +34,6 @@ export {
   geArrayRandomLength,
   getWordCapitalized,
   isEscapeKey,
-  updateItem
+  updateItem,
+  formatWords
 };
