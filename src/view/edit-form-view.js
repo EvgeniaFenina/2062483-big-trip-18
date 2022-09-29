@@ -5,6 +5,9 @@ import {
   getWordCapitalized,
   formatWords
 } from '../utils/common.js';
+import flatpickr from 'flatpickr';
+
+import 'flatpickr/dist/flatpickr.min.css';
 
 const createEditFormTemplate = (eventPoint) => {
   const {dateFrom, dateTo, type, destination, basePrice, offers, destinations, offersByType} = eventPoint;
@@ -144,6 +147,8 @@ const createEditFormTemplate = (eventPoint) => {
 };
 
 export default class EditFormView extends AbstractStatefulView {
+  #datepickerFrom = null;
+  #datepickerTo = null;
 
   constructor(eventPoint, destinations, offersByType) {
     super();
@@ -156,6 +161,20 @@ export default class EditFormView extends AbstractStatefulView {
     return createEditFormTemplate(this._state);
 
   }
+
+  removeElement = () => {
+    super.removeElement();
+
+    if (this.#datepickerTo) {
+      this.#datepickerTo.destroy();
+      this.#datepickerTo = null;
+    }
+
+    if (this.#datepickerFrom) {
+      this.#datepickerFrom.destroy();
+      this.#datepickerFrom = null;
+    }
+  };
 
   reset = (eventPoint, destinations, offersByType) => {
     this.updateElement(
@@ -223,7 +242,48 @@ export default class EditFormView extends AbstractStatefulView {
     });
   };
 
+  #dateFromInputHandler = ([userDate]) => {
+    this.updateElement({
+      dateFrom: userDate
+    });
+  };
+
+  #dateToInputHandler = ([userDate]) => {
+    this.updateElement({
+      dateTo: userDate
+    });
+  };
+
+  #setDatepickerFrom = () => {
+    this.#datepickerFrom = flatpickr (
+      this.element.querySelector('[name="event-start-time"]'),
+      {
+        dateFormat: 'd/m/y H:i',
+        enableTime: true,
+        defaultDate: this._state.dateFrom,
+        onChange: this.#dateFromInputHandler,
+        'time_24hr': true
+      }
+    );
+  };
+
+  #setDatepickerTo = () => {
+    this.#datepickerTo = flatpickr (
+      this.element.querySelector('[name="event-end-time"]'),
+      {
+        dateFormat: 'd/m/y H:i',
+        enableTime: true,
+        minDate: this._state.dateFrom,
+        defaultDate: this._state.dateTo,
+        onChange: this.#dateToInputHandler,
+        'time_24hr': true
+      }
+    );
+  };
+
   #setInnerHandlers = () => {
+    this.#setDatepickerFrom();
+    this.#setDatepickerTo();
     this.element.querySelector('.event__type-list').addEventListener('change', this.#typeChangeHandler);
     this.element.querySelector('.event__input--destination').addEventListener('change', this.#destinationChangeHandler);
     this.element.querySelector('.event__input--price').addEventListener('change', this.#priceInputHandler);
