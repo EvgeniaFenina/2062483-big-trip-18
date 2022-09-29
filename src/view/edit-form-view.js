@@ -1,7 +1,10 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import {EVENT_POINT_TYPES} from '../constants.js';
 import {getTransformationDateInEditForm} from '../utils/event-point.js';
-import {getWordCapitalized, getJoinWords} from '../utils/common.js';
+import {
+  getWordCapitalized,
+  formatWords
+} from '../utils/common.js';
 
 const createEditFormTemplate = (eventPoint) => {
   const {dateFrom, dateTo, type, destination, basePrice, offers, destinations, offersByType} = eventPoint;
@@ -12,8 +15,21 @@ const createEditFormTemplate = (eventPoint) => {
 
   const createTypeEditTemplate = (checkedType) => EVENT_POINT_TYPES.map((currentType) =>
     `<div class="event__type-item">
-      <input id="event-type-${currentType}-${EVENT_POINT_TYPES.indexOf(currentType)}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${currentType}" ${isTypeChecked(checkedType, currentType)}>
-      <label class="event__type-label  event__type-label--${currentType}" for="event-type-${currentType}-${EVENT_POINT_TYPES.indexOf(currentType)}">${getWordCapitalized(currentType)}</label>
+      <input
+        id="event-type-${currentType}-${EVENT_POINT_TYPES.indexOf(currentType)}"
+        class="event__type-input
+        visually-hidden"
+        type="radio"
+        name="event-type"
+        value="${currentType}"
+        ${isTypeChecked(checkedType, currentType)}
+      >
+      <label
+        class="event__type-label
+        event__type-label--${currentType}"
+        for="event-type-${currentType}-${EVENT_POINT_TYPES.indexOf(currentType)}"
+      >
+      ${getWordCapitalized(currentType)}</label>
     </div>`).join('');
 
 
@@ -23,8 +39,15 @@ const createEditFormTemplate = (eventPoint) => {
     const offerType = offersByType.find((offer) => offer.type === type);
     return offerType.offers.map((offer) =>
       `<div class="event__offer-selector">
-        <input class="event__offer-checkbox  visually-hidden" id="event-offer-${getJoinWords(offer.title)}-${offer.id}" type="checkbox" name="event-offer-${getJoinWords(offer.title)}" data-offer-id="${offer.id}" ${isOfferChecked(offer)}>
-        <label class="event__offer-label" for="event-offer-${getJoinWords(offer.title)}-${offer.id}">
+        <input
+          class="event__offer-checkbox
+          visually-hidden"
+          id="event-offer-${formatWords(offer.title)}-${offer.id}"
+          type="checkbox" name="event-offer-${formatWords(offer.title)}"
+          value="${offer.id}" ${isOfferChecked(offer)}>
+          <label class="event__offer-label"
+          for="event-offer-${formatWords(offer.title)}-${offer.id}"
+        >
           <span class="event__offer-title">${offer.title}</span>
           &plus;&euro;&nbsp;
           <span class="event__offer-price">${offer.price}</span>
@@ -40,7 +63,16 @@ const createEditFormTemplate = (eventPoint) => {
       `<label class="event__label  event__type-output" for="event-destination-${destination}">
         ${type}
       </label>
-      <input class="event__input  event__input--destination" id="event-destination-${destination}" type="text" name="event-destination" value="${destinationName}" list="destination-list-${destination}" onFocus="this.select()" autocomplete="off">
+      <input
+        class="event__input
+        event__input--destination"
+        id="event-destination-${destination}"
+        type="text" name="event-destination"
+        value="${destinationName}"
+        list="destination-list-${destination}"
+        onFocus="this.select()"
+        autocomplete="off"
+      >
       <datalist id="destination-list-${destination}">
         ${destinationsOptions}
       </datalist>`
@@ -143,10 +175,10 @@ export default class EditFormView extends AbstractStatefulView {
 
   setCollapseButtonClickHandler = (callback) => {
     this._callback.collapsedСlick = callback;
-    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#сollapseButtonClickHandler);
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#collapseButtonClickHandler);
   };
 
-  #сollapseButtonClickHandler = (evt) => {
+  #collapseButtonClickHandler = (evt) => {
     evt.preventDefault();
     this._callback.collapsedСlick();
   };
@@ -157,50 +189,51 @@ export default class EditFormView extends AbstractStatefulView {
     this.setCollapseButtonClickHandler(this._callback.collapsedСlick);
   };
 
-  #typeToggleHandler = (evt) => {
+  #typeChangeHandler = (evt) => {
     this.updateElement({
-      type : evt.target.value
+      type: evt.target.value,
+      offers: []
     });
   };
 
-  #destinationInputHandler = (evt) => {
+  #destinationChangeHandler = (evt) => {
     const currentDestination = this._state.destinations.find((dest) => dest.name === evt.target.value);
     if (!currentDestination) {
       evt.target.value = '';
-    } else {
-      this.updateElement({
-        destination : currentDestination.id
-      });
+      return;
     }
+    this.updateElement({
+      destination: currentDestination.id
+    });
   };
 
   #priceInputHandler = (evt) => {
     this.updateElement({
-      basePrice : evt.target.value
+      basePrice: evt.target.value
     });
   };
 
-  #offersTogglesHandler = () => {
-    const checkedOffers = this.element.querySelectorAll('.event__offer-checkbox:checked');
-    const checkedOfferIds = [];
-    checkedOffers.forEach((checkedOffer) => checkedOfferIds.push(Number(checkedOffer.dataset.offerId)));
+  #offersTogglesHandler = (evt) => {
+    const offersId = Number(evt.target.value);
+    const hasOffer = this._state.offers.includes(offersId);
+    const modifiedOffers = hasOffer ? this._state.offers.filter((offer) => offer !== offersId) : this._state.offers.concat(offersId);
 
     this.updateElement({
-      offers : checkedOfferIds
+      offers: modifiedOffers
     });
   };
 
   #setInnerHandlers = () => {
-    this.element.querySelector('.event__type-list').addEventListener('change', this.#typeToggleHandler);
-    this.element.querySelector('.event__input--destination').addEventListener('change', this.#destinationInputHandler);
+    this.element.querySelector('.event__type-list').addEventListener('change', this.#typeChangeHandler);
+    this.element.querySelector('.event__input--destination').addEventListener('change', this.#destinationChangeHandler);
     this.element.querySelector('.event__input--price').addEventListener('change', this.#priceInputHandler);
     this.element.querySelector('.event__available-offers').addEventListener('change', this.#offersTogglesHandler);
   };
 
   static parsePointToState = (eventPoint, destinations, offersByType) => ({
     ...eventPoint,
-    destinations : destinations,
-    offersByType : offersByType,
+    destinations: destinations,
+    offersByType: offersByType,
   });
 
   static parseStateToPoint = (state) => {

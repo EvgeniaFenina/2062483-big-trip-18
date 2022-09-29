@@ -42,7 +42,7 @@ export default class EventPointPresenter {
     this.#eventPointComponent.setExpandButtonClickHandler(this.#onOpenFormEdit);
     this.#eventPointComponent.setFavoriteClickHandler(this.#onFavoriteClick);
     this.#editEventPointComponent.setCollapseButtonClickHandler(this.#onCloseFormEdit);
-    this.#editEventPointComponent.setEditFormSubmitHandler(this.#onSubmitFormEdit);
+    this.#editEventPointComponent.setEditFormSubmitHandler(this.#onFormEditSubmit);
 
     if (prevEventPointComponent === null || prevEditEventPointComponent === null) {
       render(this.#eventPointComponent, this.#tripListContainer);
@@ -101,7 +101,7 @@ export default class EventPointPresenter {
     this.#replaceEditFormToEventPoint();
   };
 
-  #onSubmitFormEdit = (update) => {
+  #onFormEditSubmit = (update) => {
     this.#changeData(update);
     this.#replaceEditFormToEventPoint();
   };
