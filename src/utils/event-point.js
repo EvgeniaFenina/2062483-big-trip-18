@@ -33,6 +33,8 @@ const sortByTime = (a, b) => getDurationEventInMin(b.dateFrom, b.dateTo) - getDu
 
 const sortByDay = (a, b) => dayjs(a.dateFrom).diff(dayjs(b.dateFrom));
 
+const isDatesEqual = (dateA, dateB) => (dateA === null && dateB === null) || dayjs(dateA).isSame(dateB, 'D');
+
 export {
   getTransformationDateEvent,
   getTransformationDateEventForUI,
@@ -44,5 +46,6 @@ export {
   isEventPointInPast,
   sortByPrice,
   sortByTime,
-  sortByDay
+  sortByDay,
+  isDatesEqual
 };

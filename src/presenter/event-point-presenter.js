@@ -1,12 +1,17 @@
 import EventPointView from '../view/event-point-view.js';
 import EditFormView from '../view/edit-form-view.js';
 import {isEscapeKey} from '../utils/common.js';
-import {Mode} from '../constants.js';
+import {
+  Mode,
+  UserAction,
+  UpdateType
+} from '../constants.js';
 import {
   render,
   replace,
   remove
 } from '../framework/render.js';
+import {isDatesEqual} from '../utils/event-point.js';
 
 export default class EventPointPresenter {
   #tripListContainer = null;
@@ -43,6 +48,7 @@ export default class EventPointPresenter {
     this.#eventPointComponent.setFavoriteClickHandler(this.#onFavoriteClick);
     this.#editEventPointComponent.setCollapseButtonClickHandler(this.#onCloseFormEdit);
     this.#editEventPointComponent.setEditFormSubmitHandler(this.#onFormEditSubmit);
+    this.#editEventPointComponent.setDeleteClickHandler(this.#handleDeleteClick);
 
     if (prevEventPointComponent === null || prevEditEventPointComponent === null) {
       render(this.#eventPointComponent, this.#tripListContainer);
@@ -102,9 +108,29 @@ export default class EventPointPresenter {
   };
 
   #onFormEditSubmit = (update) => {
-    this.#changeData(update);
+    const isMinorUpdate = !isDatesEqual(this.#eventPoint, update);
+
+    this.#changeData(
+      UserAction.UPDATE_POINT,
+      isMinorUpdate ? UpdateType.MINOR : UpdateType.PATCH,
+      update
+    );
     this.#replaceEditFormToEventPoint();
   };
 
-  #onFavoriteClick = () => this.#changeData({...this.#eventPoint, isFavorite: !this.#eventPoint.isFavorite});
+  #handleDeleteClick = (eventPoint) => {
+    this.#changeData(
+      UserAction.DELETE_POINT,
+      UpdateType.MINOR,
+      eventPoint,
+    );
+  };
+
+  #onFavoriteClick = () => {
+    this.#changeData(
+      UserAction.UPDATE_POINT,
+      UpdateType.MINOR,
+      {...this.#eventPoint, isFavorite: !this.#eventPoint.isFavorite}
+    );
+  };
 }
