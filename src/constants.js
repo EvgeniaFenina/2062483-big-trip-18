@@ -66,6 +66,28 @@ const SortType = {
   PRICE: 'sort-price',
 };
 
+const UserAction = {
+  UPDATE_POINT: 'UPDATE_POINT',
+  ADD_POINT: 'ADD_POINT',
+  DELETE_POINT: 'DELETE_POINT',
+};
+
+const UpdateType = {
+  PATCH: 'PATCH',
+  MINOR: 'MINOR',
+  MAJOR: 'MAJOR',
+};
+
+const EMPTY_POINT = {
+  basePrice: 0,
+  dateFrom: new Date(),
+  dateTo: new Date(),
+  destination: 1,
+  isFavorite: false,
+  offers: [],
+  type: 'bus',
+};
+
 export {
   EVENT_POINT_TYPES,
   MIN_PRICE_EVENT_VALUE,
@@ -79,6 +101,9 @@ export {
   MAX_MINUTES_IN_EVENT_DAY_TO,
   FilterType,
   Mode,
-  SortType
+  SortType,
+  UserAction,
+  UpdateType,
+  EMPTY_POINT
 };
 

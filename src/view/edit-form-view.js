@@ -1,3 +1,4 @@
+import he from 'he';
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import {EVENT_POINT_TYPES} from '../constants.js';
 import {getTransformationDateInEditForm} from '../utils/event-point.js';
@@ -71,7 +72,7 @@ const createEditFormTemplate = (eventPoint) => {
         event__input--destination"
         id="event-destination-${destination}"
         type="text" name="event-destination"
-        value="${destinationName}"
+        value="${he.encode(destinationName)}"
         list="destination-list-${destination}"
         onFocus="this.select()"
         autocomplete="off"
@@ -118,7 +119,7 @@ const createEditFormTemplate = (eventPoint) => {
               <span class="visually-hidden">Price</span>
               &euro;
             </label>
-            <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${basePrice}">
+            <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${he.encode(String(basePrice))}" onFocus="this.select()">
           </div>
           <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
           <button class="event__reset-btn" type="reset">Delete</button>
@@ -206,6 +207,7 @@ export default class EditFormView extends AbstractStatefulView {
     this.#setInnerHandlers();
     this.setEditFormSubmitHandler(this._callback.formSubmit);
     this.setCollapseButtonClickHandler(this._callback.collapsedСlick);
+    this.setDeleteClickHandler(this._callback.deleteClick);
   };
 
   #typeChangeHandler = (evt) => {
@@ -288,6 +290,16 @@ export default class EditFormView extends AbstractStatefulView {
     this.element.querySelector('.event__input--destination').addEventListener('change', this.#destinationChangeHandler);
     this.element.querySelector('.event__input--price').addEventListener('change', this.#priceInputHandler);
     this.element.querySelector('.event__available-offers').addEventListener('change', this.#offersTogglesHandler);
+  };
+
+  setDeleteClickHandler = (callback) => {
+    this._callback.deleteClick = callback;
+    this.element.querySelector('.event__reset-btn').addEventListener('click', this.#formDeleteClickHandler);
+  };
+
+  #formDeleteClickHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.deleteClick(EditFormView.parseStateToPoint(this._state));
   };
 
   static parsePointToState = (eventPoint, destinations, offersByType) => ({
