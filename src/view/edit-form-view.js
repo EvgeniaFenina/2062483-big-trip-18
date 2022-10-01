@@ -13,7 +13,7 @@ import 'flatpickr/dist/flatpickr.min.css';
 const createEditFormTemplate = (eventPoint) => {
   const {dateFrom, dateTo, type, destination, basePrice, offers, destinations, offersByType} = eventPoint;
 
-  const getDestinationDescription = () => (destinations.find((dest) => dest.id === destination)).description;
+  const getDestinationDescription = () => (destinations.find((dest) => dest.id === destination))?.description;
 
   const isTypeChecked = (checkedType, currentType) => currentType === checkedType ? 'checked' : '';
 
@@ -39,7 +39,7 @@ const createEditFormTemplate = (eventPoint) => {
 
   const isOfferChecked = (offer) => offers.includes(offer.id) ? 'checked' : '';
 
-  const createOfferEditTemplate = () => {
+  const createOfferTemplate = () => {
     const offerType = offersByType.find((offer) => offer.type === type);
     return offerType.offers.map((offer) =>
       `<div class="event__offer-selector">
@@ -59,9 +59,26 @@ const createEditFormTemplate = (eventPoint) => {
       </div>`).join('');
   };
 
+  const createOffersTemplate = () =>(
+    `<section class="event__section  event__section--offers">
+      <h3 class="event__section-title  event__section-title--offers">Offers</h3>
+      <div class="event__available-offers">
+      ${createOfferTemplate()}
+    </section>`
+  );
+
+  const createPhotoTemplate = () => {
+    const currentDestination = destinations.find((dest) => dest.id === destination);
+    return currentDestination?.pictures.map((picture) => `<img class="event__photo" src="${picture.src}" alt="${picture.description}">`).join('');
+  };
+
   const createDestinationTemplate = () => {
-    const destinationName = destinations.find((dest) => dest.id === destination).name;
-    const destinationsOptions = [...new Set(destinations.map((dest) => `<option value="${dest.name}" ${destinationName === dest.name ? 'selected' : ''}></option>`))].join('');
+    const destinationName = (destination === undefined) ? '' : destinations.find((dest) => dest.id === destination).name;
+
+    const destinationsOptions = [...new Set(destinations.map((dest) => `
+    <option
+      value="${dest.name}" ${destinationName === dest.name ? 'selected' : ''}>
+    </option>`))].join('');
 
     return (
       `<label class="event__label  event__type-output" for="event-destination-${destination}">
@@ -71,11 +88,13 @@ const createEditFormTemplate = (eventPoint) => {
         class="event__input
         event__input--destination"
         id="event-destination-${destination}"
-        type="text" name="event-destination"
+        type="text"
         value="${he.encode(destinationName)}"
+        name="event-destination"
         list="destination-list-${destination}"
         onFocus="this.select()"
         autocomplete="off"
+        required
       >
       <datalist id="destination-list-${destination}">
         ${destinationsOptions}
@@ -83,10 +102,17 @@ const createEditFormTemplate = (eventPoint) => {
     );
   };
 
-  const createPhotoTemplate = () => {
-    const currentDestination = destinations.find((dest) => dest.id === destination);
-    return currentDestination.pictures.map((picture) => `<img class="event__photo" src="${picture.src}" alt="${picture.description}">`).join('');
-  };
+  const createDestinationsTemplate = () => (
+    `<section class="event__section  event__section--destination ${destination === undefined ? 'visually-hidden' : ''}">
+      <h3 class="event__section-title  event__section-title--destination">Destination</h3>
+      <p class="event__destination-description">${getDestinationDescription()}</p>
+      <div class="event__photos-container">
+        <div class="event__photos-tape">
+          ${createPhotoTemplate()}
+        </div>
+      </div>
+    </section>`
+  );
 
   return (
     `<form class="event event--edit" action="#" method="post">
@@ -105,7 +131,7 @@ const createEditFormTemplate = (eventPoint) => {
             </div>
           </div>
           <div class="event__field-group  event__field-group--destination">
-            ${createDestinationTemplate()}
+          ${createDestinationTemplate()}
           </div>
           <div class="event__field-group  event__field-group--time">
             <label class="visually-hidden" for="event-start-time-1">From</label>
@@ -119,7 +145,7 @@ const createEditFormTemplate = (eventPoint) => {
               <span class="visually-hidden">Price</span>
               &euro;
             </label>
-            <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${he.encode(String(basePrice))}" onFocus="this.select()">
+            <input class="event__input  event__input--price" id="event-price-1" type="number" name="event-price" value="${Math.abs(Number(basePrice))}" onFocus="this.select()" min="1">
           </div>
           <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
           <button class="event__reset-btn" type="reset">Delete</button>
@@ -128,20 +154,8 @@ const createEditFormTemplate = (eventPoint) => {
           </button>
         </header>
         <section class="event__details">
-          <section class="event__section  event__section--offers">
-            <h3 class="event__section-title  event__section-title--offers">Offers</h3>
-            <div class="event__available-offers">
-            ${createOfferEditTemplate()}
-          </section>
-          <section class="event__section  event__section--destination">
-            <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-            <p class="event__destination-description">${getDestinationDescription()}</p>
-            <div class="event__photos-container">
-              <div class="event__photos-tape">
-                ${createPhotoTemplate()}
-              </div>
-            </div>
-          </section>
+        ${(offersByType) ? createOffersTemplate() : ''}
+        ${(createDestinationsTemplate())}
         </section>
       </form>`
   );

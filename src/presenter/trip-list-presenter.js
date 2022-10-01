@@ -108,6 +108,8 @@ export default class TripListPresenter {
       case UserAction.DELETE_POINT:
         this.#eventPointModel.deleteEventPoint(updateType, update);
         break;
+      default :
+        throw new Error(`Unknown '${actionType}'!`);
     }
   };
 
@@ -124,6 +126,8 @@ export default class TripListPresenter {
         this.#clearTripList();
         this.#renderTripList({resetSortType: true});
         break;
+      default :
+        throw new Error(`Unknown '${updateType}'!`);
     }
   };
 
@@ -145,7 +149,7 @@ export default class TripListPresenter {
     this.#eventPointPresenter.set(eventPoint.id, eventPointPresenter);
   };
 
-  #renderEventPoins = (eventPoints) => eventPoints.forEach((eventPoint) => this.#renderEventPoint(eventPoint));
+  #renderEventPoints = (eventPoints) => eventPoints.forEach((eventPoint) => this.#renderEventPoint(eventPoint));
 
   #renderNoEventPoint = () => {
     this.#noEventPointComponent = new NoEventPointView(this.#filterType);
@@ -170,15 +174,14 @@ export default class TripListPresenter {
 
   #renderTripList = () => {
     const eventPoints = this.eventPoints;
-    const eventPointsCount = eventPoints.length;
 
     render(this.#tripListComponent, this.#tripListContainer);
 
-    if (eventPointsCount === 0) {
+    if (this.eventPoints.length === 0) {
       return this.#renderNoEventPoint();
     }
 
     this.#renderSort();
-    this.#renderEventPoins(eventPoints);
+    this.#renderEventPoints(eventPoints);
   };
 }

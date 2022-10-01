@@ -8,7 +8,6 @@ import {
   EMPTY_POINT
 } from '../constants.js';
 
-
 export default class EventPointNewPresenter {
   #tripListContainer = null;
   #changeData = null;
@@ -36,6 +35,7 @@ export default class EventPointNewPresenter {
     this.#editEventPointComponent = new EditFormView(EMPTY_POINT, destinations, offersByType);
     this.#editEventPointComponent.setEditFormSubmitHandler(this.#handleFormSubmit);
     this.#editEventPointComponent.setDeleteClickHandler(this.#handleDeleteClick);
+    this.#editEventPointComponent.setCollapseButtonClickHandler(this.#collapseButtonClickHandler);
 
     render(this.#editEventPointComponent, this.#tripListContainer, RenderPosition.AFTERBEGIN);
 
@@ -74,5 +74,9 @@ export default class EventPointNewPresenter {
       evt.preventDefault();
       this.destroy();
     }
+  };
+
+  #collapseButtonClickHandler = () => {
+    this.destroy();
   };
 }

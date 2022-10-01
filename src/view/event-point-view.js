@@ -43,7 +43,7 @@ const createEventPointTemplate = (eventPoint, destinations, offersByType) => {
           <p class="event__duration">${getTransformationDuration(dateFrom, dateTo)}</p>
         </div>
         <p class="event__price">
-          &euro;&nbsp;<span class="event__price-value">${basePrice}</span>
+          &euro;&nbsp;<span class="event__price-value">${Math.abs(Number(basePrice))}</span>
         </p>
         <h4 class="visually-hidden">Offers:</h4>
         <ul class="event__selected-offers">
