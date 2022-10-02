@@ -4,13 +4,14 @@ import SortView from '../view/sort-view.js';
 import LoadingView from '../view/loading-view.js';
 import EventPointPresenter from '../presenter/event-point-presenter.js';
 import EventPointNewPresenter from '../presenter/event-point-new-presenter.js';
-
+import UiBlocker from '../framework/ui-blocker/ui-blocker.js';
 import {filter} from '../utils/filter.js';
 import {
   SortType,
   UpdateType,
   UserAction,
-  FilterType
+  FilterType,
+  TimeLimit
 } from '../constants.js';
 import {
   render,
@@ -42,6 +43,7 @@ export default class TripListPresenter {
   #isLoadingPoints = true;
   #isLoadingOffers = true;
   #isLoadingDestinations = true;
+  #uiBlocker = new UiBlocker(TimeLimit.LOWER_LIMIT, TimeLimit.UPPER_LIMIT);
 
   constructor(tripListContainer, eventPointModel, destinationModel, offerModel, filterModel) {
     this.#tripListContainer = tripListContainer;
@@ -98,20 +100,39 @@ export default class TripListPresenter {
     this.#eventPointPresenter.forEach((presenter) => presenter.resetView());
   };
 
-  #handleViewAction = (actionType, updateType, update) => {
+  #handleViewAction = async (actionType, updateType, update) => {
+    this.#uiBlocker.block();
+
     switch (actionType) {
       case UserAction.UPDATE_POINT:
-        this.#eventPointModel.updateEventPoint(updateType, update);
+        this.#eventPointPresenter.get(update.id).setSaving();
+        try {
+          await this.#eventPointModel.updateEventPoint(updateType, update);
+        } catch(err) {
+          this.#eventPointPresenter.get(update.id).setAborting();
+        }
         break;
       case UserAction.ADD_POINT:
-        this.#eventPointModel.addEventPoint(updateType, update);
+        this.#eventPointNewPresenter.setSaving();
+        try {
+          await this.#eventPointModel.addEventPoint(updateType, update);
+        } catch(err) {
+          this.#eventPointPresenter.setAborting();
+        }
         break;
       case UserAction.DELETE_POINT:
-        this.#eventPointModel.deleteEventPoint(updateType, update);
+        this.#eventPointPresenter.get(update.id).setDeleting();
+        try {
+          await this.#eventPointModel.deleteEventPoint(updateType, update);
+        } catch(err) {
+          this.#eventPointPresenter.get(update.id).setAborting();
+        }
         break;
       default :
         throw new Error(`Unknown '${actionType}'!`);
     }
+
+    this.#uiBlocker.unblock();
   };
 
   #handleModelEvent = (updateType, data) => {
