@@ -145,7 +145,7 @@ const createEditFormTemplate = (eventPoint) => {
               <span class="visually-hidden">Price</span>
               &euro;
             </label>
-            <input class="event__input  event__input--price" id="event-price-1" type="number" name="event-price" value="${Math.abs(Number(basePrice))}" onFocus="this.select()" min="1">
+            <input class="event__input  event__input--price" id="event-price-1" type="number" name="event-price" value="${Number(basePrice)}" onFocus="this.select()" min="1" required>
           </div>
           <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
           <button class="event__reset-btn" type="reset">Delete</button>
@@ -243,9 +243,14 @@ export default class EditFormView extends AbstractStatefulView {
   };
 
   #priceInputHandler = (evt) => {
-    this.updateElement({
-      basePrice: evt.target.value
-    });
+    evt.preventDefault();
+    if (evt.target.value > 0) {
+      this.updateElement({
+        basePrice: evt.target.value,
+      });
+    } else {
+      evt.target.value = '';
+    }
   };
 
   #offersTogglesHandler = (evt) => {
