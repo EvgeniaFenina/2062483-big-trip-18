@@ -76,6 +76,9 @@ const UpdateType = {
   PATCH: 'PATCH',
   MINOR: 'MINOR',
   MAJOR: 'MAJOR',
+  INIT_POINTS: 'INIT_POINTS',
+  INIT_OFFERS: 'INIT_OFFERS',
+  INIT_DESTINATIONS: 'INIT_DESTINATIONS'
 };
 
 const EMPTY_POINT = {
@@ -86,6 +89,11 @@ const EMPTY_POINT = {
   isFavorite: false,
   offers: [],
   type: 'bus',
+};
+
+const Method = {
+  GET: 'GET',
+  PUT: 'PUT',
 };
 
 export {
@@ -104,6 +112,7 @@ export {
   SortType,
   UserAction,
   UpdateType,
-  EMPTY_POINT
+  EMPTY_POINT,
+  Method
 };
 

@@ -1,6 +1,7 @@
 import TripListView from '../view/trip-list-view.js';
 import NoEventPointView from '../view/no-event-point-view.js';
 import SortView from '../view/sort-view.js';
+import LoadingView from '../view/loading-view.js';
 import EventPointPresenter from '../presenter/event-point-presenter.js';
 import EventPointNewPresenter from '../presenter/event-point-new-presenter.js';
 
@@ -13,7 +14,8 @@ import {
 } from '../constants.js';
 import {
   render,
-  remove
+  remove,
+  RenderPosition
 } from '../framework/render.js';
 import {
   sortByPrice,
@@ -23,6 +25,7 @@ import {
 
 export default class TripListPresenter {
   #tripListComponent = new TripListView();
+  #loadingComponent = new LoadingView();
   #noEventPointComponent = null;
   #sortComponent = null;
 
@@ -32,15 +35,13 @@ export default class TripListPresenter {
   #offerModel = null;
   #filterModel = null;
 
-  #eventPointsList = [];
-  #eventDestinations = [];
-  #eventOffersByType = [];
-  #sourcedEventPointsList = [];
-
   #eventPointPresenter = new Map();
   #eventPointNewPresenter = null;
   #currentSortType = SortType.DAY;
   #filterType = FilterType.EVERYTHING;
+  #isLoadingPoints = true;
+  #isLoadingOffers = true;
+  #isLoadingDestinations = true;
 
   constructor(tripListContainer, eventPointModel, destinationModel, offerModel, filterModel) {
     this.#tripListContainer = tripListContainer;
@@ -82,14 +83,14 @@ export default class TripListPresenter {
     return this.#offerModel.offersByType;
   }
 
+  init = () => {
+    this.#renderTripList();
+  };
+
   createEventPoint = (callback) => {
     this.#currentSortType = SortType.DAY;
     this.#filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
     this.#eventPointNewPresenter.init(callback);
-  };
-
-  init = () => {
-    this.#renderTripList();
   };
 
   #handleModeChange = () => {
@@ -126,6 +127,21 @@ export default class TripListPresenter {
         this.#clearTripList();
         this.#renderTripList({resetSortType: true});
         break;
+      case UpdateType.INIT_POINTS:
+        this.#isLoadingPoints = false;
+        remove(this.#loadingComponent);
+        this.#renderTripList();
+        break;
+      case UpdateType.INIT_DESTINATIONS:
+        this.#isLoadingDestinations = false;
+        remove(this.#loadingComponent);
+        this.#renderTripList();
+        break;
+      case UpdateType.INIT_OFFERS:
+        this.#isLoadingOffers = false;
+        remove(this.#loadingComponent);
+        this.#renderTripList();
+        break;
       default :
         throw new Error(`Unknown '${updateType}'!`);
     }
@@ -151,9 +167,11 @@ export default class TripListPresenter {
 
   #renderEventPoints = (eventPoints) => eventPoints.forEach((eventPoint) => this.#renderEventPoint(eventPoint));
 
+  #renderLoading = () => render(this.#loadingComponent, this.#tripListComponent.element, RenderPosition.AFTERBEGIN);
+
   #renderNoEventPoint = () => {
     this.#noEventPointComponent = new NoEventPointView(this.#filterType);
-    render(this.#noEventPointComponent, this.#tripListComponent.element);
+    render(this.#noEventPointComponent, this.#tripListComponent.element, RenderPosition.AFTERBEGIN);
   };
 
   #clearTripList = (resetSortType = false) => {
@@ -162,6 +180,7 @@ export default class TripListPresenter {
     this.#eventPointPresenter.clear();
 
     remove(this.#sortComponent);
+    remove(this.#loadingComponent);
 
     if (this.#noEventPointComponent) {
       remove(this.#noEventPointComponent);
@@ -173,11 +192,16 @@ export default class TripListPresenter {
   };
 
   #renderTripList = () => {
-    const eventPoints = this.eventPoints;
-
     render(this.#tripListComponent, this.#tripListContainer);
 
-    if (this.eventPoints.length === 0) {
+    if (this.#isLoadingPoints || this.#isLoadingOffers || this.#isLoadingDestinations) {
+      this.#renderLoading();
+      return;
+    }
+
+    const eventPoints = this.eventPoints;
+
+    if (eventPoints.length === 0) {
       return this.#renderNoEventPoint();
     }
 
