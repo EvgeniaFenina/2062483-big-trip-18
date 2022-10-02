@@ -1,9 +1,19 @@
-import ApiService from '../framework/api-service.js';
-import {Method} from '../constants.js';
+import ApiService from './framework/api-service.js';
+import {Method} from './constants.js';
 
 export default class EventPointApiService extends ApiService {
   get eventPoints() {
     return this._load({url: 'points'})
+      .then(ApiService.parseResponse);
+  }
+
+  get destinations() {
+    return this._load({url: 'destinations'})
+      .then(ApiService.parseResponse);
+  }
+
+  get offers() {
+    return this._load({url: 'offers'})
       .then(ApiService.parseResponse);
   }
 
@@ -18,6 +28,28 @@ export default class EventPointApiService extends ApiService {
     const parsedResponse = await ApiService.parseResponse(response);
 
     return parsedResponse;
+  };
+
+  addEventPoint = async (eventPoint) => {
+    const response = await this._load({
+      url: 'points',
+      method: Method.POST,
+      body: JSON.stringify(this.#adaptToServer(eventPoint)),
+      headers: new Headers({'Content-Type': 'application/json'}),
+    });
+
+    const parsedResponse = await ApiService.parseResponse(response);
+
+    return parsedResponse;
+  };
+
+  deleteEventPoint = async (eventPoint) => {
+    const response = await this._load({
+      url: `points/${eventPoint.id}`,
+      method: Method.DELETE,
+    });
+
+    return response;
   };
 
   #adaptToServer = (eventPoint) => {

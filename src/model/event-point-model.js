@@ -26,13 +26,15 @@ export default class EventPointModel extends Observable {
     this._notify(UpdateType.INIT_POINTS);
   };
 
-  addEventPoint = (updateType, update) => {
-    this.#eventPoints = [
-      update,
-      ...this.#eventPoints,
-    ];
-
-    this._notify(updateType, update);
+  addEventPoint = async (updateType, update) => {
+    try {
+      const response = await this.#eventPointsApiService.addEventPoint(update);
+      const newEventPoint = this.#adaptToClient(response);
+      this.#eventPoints = [newEventPoint, ...this.#eventPoints];
+      this._notify(updateType, newEventPoint);
+    } catch(err) {
+      throw new Error('Can\'t add event point');
+    }
   };
 
   updateEventPoint = async (updateType, update) => {
@@ -45,30 +47,38 @@ export default class EventPointModel extends Observable {
     try {
       const response = await this.#eventPointsApiService.updateEventPoint(update);
       const updatedEventPoint = this.#adaptToClient(response);
+
       this.#eventPoints = [
         ...this.#eventPoints.slice(0, index),
         update,
         ...this.#eventPoints.slice(index + 1),
       ];
+
       this._notify(updateType, updatedEventPoint);
     } catch(err) {
       throw new Error('Can\'t update event point');
     }
   };
 
-  deleteEventPoint = (updateType, update) => {
+  deleteEventPoint = async (updateType, update) => {
     const index = this.#eventPoints.findIndex((eventPoint) => eventPoint.id === update.id);
 
     if (index === -1) {
       throw new Error('Can\'t delete unexisting event point');
     }
 
-    this.#eventPoints = [
-      ...this.#eventPoints.slice(0, index),
-      ...this.#eventPoints.slice(index + 1),
-    ];
+    try {
+      await this.#eventPointsApiService.deleteEventPoint(update);
 
-    this._notify(updateType);
+      this.#eventPoints = [
+        ...this.#eventPoints.slice(0, index),
+        ...this.#eventPoints.slice(index + 1),
+      ];
+
+      this._notify(updateType);
+    } catch(err) {
+      throw new Error('Can\'t delete task');
+    }
   };
 
   #adaptToClient = (eventPoints) => {

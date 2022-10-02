@@ -2,13 +2,13 @@ import Observable from '../framework/observable.js';
 import {UpdateType} from '../constants.js';
 
 export default class DestinationsModel extends Observable {
-  #destinationsApiService = null;
+  #eventPointApiService = null;
   #destinations = [];
 
-  constructor(destinationsApiService) {
+  constructor(eventPointApiService) {
     super();
 
-    this.#destinationsApiService = destinationsApiService;
+    this.#eventPointApiService = eventPointApiService;
   }
 
   get destinations() {
@@ -17,8 +17,7 @@ export default class DestinationsModel extends Observable {
 
   init = async () => {
     try {
-      const destinations = await this.#destinationsApiService.destinations;
-      this.#destinations = destinations;
+      this.#destinations = await this.#eventPointApiService.destinations;
     } catch (err) {
       this.#destinations = [];
     }

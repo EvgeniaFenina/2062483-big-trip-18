@@ -1,7 +1,6 @@
 import {remove, render, RenderPosition} from '../framework/render.js';
 import EditFormView from '../view/edit-form-view.js';
 import {isEscapeKey} from '../utils/common.js';
-import {nanoid} from 'nanoid';
 import {
   UserAction,
   UpdateType,
@@ -55,14 +54,32 @@ export default class EventPointNewPresenter {
     document.removeEventListener('keydown', this.#escKeyDownHandler);
   };
 
+  setSaving = () => {
+    this.#editEventPointComponent.updateElement({
+      isDisabled: true,
+      isSaving: true,
+    });
+  };
+
+  setAborting = () => {
+    const resetFormState = () => {
+      this.#editEventPointComponent.updateElement({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false,
+      });
+    };
+
+    this.#editEventPointComponent.shake(resetFormState);
+  };
+
   #handleFormSubmit = (eventPoint) => {
     this.#changeData(
       UserAction.ADD_POINT,
       UpdateType.MINOR,
 
-      {id: nanoid(), ...eventPoint},
+      eventPoint,
     );
-    this.destroy();
   };
 
   #handleDeleteClick = () => {
