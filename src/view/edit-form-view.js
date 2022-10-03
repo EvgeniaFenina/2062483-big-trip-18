@@ -251,19 +251,19 @@ export default class EditFormView extends AbstractStatefulView {
   };
 
   setCollapseButtonClickHandler = (callback) => {
-    this._callback.collapsedСlick = callback;
+    this._callback.collapsedClick = callback;
     this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#collapseButtonClickHandler);
   };
 
   #collapseButtonClickHandler = (evt) => {
     evt.preventDefault();
-    this._callback.collapsedСlick();
+    this._callback.collapsedClick();
   };
 
   _restoreHandlers = () => {
     this.#setInnerHandlers();
     this.setEditFormSubmitHandler(this._callback.formSubmit);
-    this.setCollapseButtonClickHandler(this._callback.collapsedСlick);
+    this.setCollapseButtonClickHandler(this._callback.collapsedClick);
     this.setDeleteClickHandler(this._callback.deleteClick);
   };
 

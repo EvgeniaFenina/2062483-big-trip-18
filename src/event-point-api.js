@@ -43,14 +43,10 @@ export default class EventPointApiService extends ApiService {
     return parsedResponse;
   };
 
-  deleteEventPoint = async (eventPoint) => {
-    const response = await this._load({
-      url: `points/${eventPoint.id}`,
-      method: Method.DELETE,
-    });
-
-    return response;
-  };
+  deleteEventPoint = async (eventPoint) => await this._load({
+    url: `points/${eventPoint.id}`,
+    method: Method.DELETE,
+  });
 
   #adaptToServer = (eventPoint) => {
     const adaptedPoint = {

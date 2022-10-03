@@ -1,7 +1,7 @@
 import Observable from '../framework/observable.js';
 import {UpdateType} from '../constants.js';
 
-export default class OffersModel extends Observable {
+export default class OfferModel extends Observable {
   #eventPointApiService = null;
   #offersByType = [];
 

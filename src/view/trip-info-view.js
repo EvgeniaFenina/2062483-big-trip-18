@@ -59,6 +59,7 @@ export default class TripInfoView extends AbstractView {
 
     if (tripNames.length > maxDisplayedPointsName) {
       tripNames.splice(1, tripNames.length - 2, '&hellip;');
+      return tripNames.join('&nbsp;&mdash;');
     }
 
     return tripNames.join('&nbsp;&mdash;&nbsp;');
