@@ -11,7 +11,11 @@ import {
   replace,
   remove
 } from '../framework/render.js';
-import {isDatesEqual} from '../utils/event-point.js';
+import {
+  isDatesEqual,
+  isDurationEqual,
+  isPriceEqual
+} from '../utils/event-point.js';
 
 export default class EventPointPresenter {
   #tripListContainer = null;
@@ -144,7 +148,7 @@ export default class EventPointPresenter {
   };
 
   #onFormEditSubmit = (update) => {
-    const isMinorUpdate = !isDatesEqual(this.#eventPoint, update);
+    const isMinorUpdate = !isDatesEqual(this.#eventPoint, update) || !isDurationEqual(this.#eventPoint, update) || !isPriceEqual(this.#eventPoint, update);
 
     this.#changeData(
       UserAction.UPDATE_POINT,

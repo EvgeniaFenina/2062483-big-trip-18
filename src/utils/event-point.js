@@ -35,6 +35,12 @@ const sortByDay = (a, b) => dayjs(a.dateFrom).diff(dayjs(b.dateFrom));
 
 const isDatesEqual = (dateA, dateB) => (dateA === null && dateB === null) || dayjs(dateA).isSame(dateB, 'D');
 
+const isDurationEqual = (a, b) => getDurationEventInMin(a.dateFrom, a.dateTo) === getDurationEventInMin(b.dateFrom, b.dateTo);
+
+const isPriceEqual = (a, b) => a.basePrice === b.basePrice;
+
+const getTransformationDatesTrip = (dateA, dateB) => `${dayjs(dateA).format('MMM D')}&nbsp;&mdash;&nbsp;${dayjs(dateB).format('MMM D')}`;
+
 export {
   getTransformationDateEvent,
   getTransformationDateEventForUI,
@@ -47,5 +53,8 @@ export {
   sortByPrice,
   sortByTime,
   sortByDay,
-  isDatesEqual
+  isDatesEqual,
+  getTransformationDatesTrip,
+  isDurationEqual,
+  isPriceEqual
 };
