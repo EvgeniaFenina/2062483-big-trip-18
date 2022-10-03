@@ -98,13 +98,15 @@ const Method = {
   DELETE: 'DELETE'
 };
 
-const AUTHORIZATION = 'Basic fvjnjn3jn5njk3';
+const AUTHORIZATION = 'Basic fvjnjn3jn5njk3m';
 const END_POINT = 'https://18.ecmascript.pages.academy/big-trip';
 
 const TimeLimit = {
   LOWER_LIMIT: 350,
   UPPER_LIMIT: 1000,
 };
+
+const maxDisplayedPointsName = 3;
 
 export {
   EVENT_POINT_TYPES,
@@ -126,6 +128,7 @@ export {
   Method,
   AUTHORIZATION,
   END_POINT,
-  TimeLimit
+  TimeLimit,
+  maxDisplayedPointsName
 };
 

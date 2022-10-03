@@ -14,7 +14,7 @@ import {
 
 const siteFilterElement = document.querySelector('.trip-controls__filters');
 const siteTripListElement = document.querySelector('.trip-events');
-const siteHeaderElement = document.querySelector('.page-header__container');
+const siteHeaderElement = document.querySelector('.trip-main');
 
 const eventPointModel = new EventPointModel(new EventPointApiService(END_POINT, AUTHORIZATION));
 const destinationModel = new DestinationsModel(new EventPointApiService(END_POINT, AUTHORIZATION));

@@ -2,6 +2,7 @@ import TripListView from '../view/trip-list-view.js';
 import NoEventPointView from '../view/no-event-point-view.js';
 import SortView from '../view/sort-view.js';
 import LoadingView from '../view/loading-view.js';
+import TripInfoView from '../view/trip-info-view.js';
 import EventPointPresenter from '../presenter/event-point-presenter.js';
 import EventPointNewPresenter from '../presenter/event-point-new-presenter.js';
 import UiBlocker from '../framework/ui-blocker/ui-blocker.js';
@@ -29,6 +30,7 @@ export default class TripListPresenter {
   #loadingComponent = new LoadingView();
   #noEventPointComponent = null;
   #sortComponent = null;
+  #tripInfoComponent = null;
 
   #tripListContainer = null;
   #eventPointModel = null;
@@ -180,6 +182,12 @@ export default class TripListPresenter {
     render(this.#sortComponent, this.#tripListComponent.element);
   };
 
+  #renderTripInfo = () => {
+    const siteMainTripElement = document.querySelector('.trip-main');
+    this.#tripInfoComponent = new TripInfoView(this.eventPoints, this.destinations, this.offersByType);
+    render(this.#tripInfoComponent, siteMainTripElement, RenderPosition.AFTERBEGIN);
+  };
+
   #renderEventPoint = (eventPoint) => {
     const eventPointPresenter = new EventPointPresenter(this.#tripListComponent.element, this.#handleViewAction, this.#handleModeChange);
     eventPointPresenter.init(eventPoint, this.destinations, this.offersByType);
@@ -202,6 +210,7 @@ export default class TripListPresenter {
 
     remove(this.#sortComponent);
     remove(this.#loadingComponent);
+    remove(this.#tripInfoComponent);
 
     if (this.#noEventPointComponent) {
       remove(this.#noEventPointComponent);
@@ -228,5 +237,6 @@ export default class TripListPresenter {
 
     this.#renderSort();
     this.#renderEventPoints(eventPoints);
+    this.#renderTripInfo();
   };
 }
