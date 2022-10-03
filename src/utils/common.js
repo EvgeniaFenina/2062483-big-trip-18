@@ -18,12 +18,9 @@ const updateItem = (items, update) => {
   ];
 };
 
-const getSumNumbersInArray = (arr) => arr.reduce((sum, number) => sum + number, 0);
-
 export {
   getWordCapitalized,
   isEscapeKey,
   updateItem,
-  formatWords,
-  getSumNumbersInArray
+  formatWords
 };

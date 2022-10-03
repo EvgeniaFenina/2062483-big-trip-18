@@ -106,6 +106,8 @@ const TimeLimit = {
   UPPER_LIMIT: 1000,
 };
 
+const maxDisplayedPointsName = 3;
+
 export {
   EVENT_POINT_TYPES,
   MIN_PRICE_EVENT_VALUE,
@@ -126,6 +128,7 @@ export {
   Method,
   AUTHORIZATION,
   END_POINT,
-  TimeLimit
+  TimeLimit,
+  maxDisplayedPointsName
 };
 
